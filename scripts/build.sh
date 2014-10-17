@@ -2,8 +2,8 @@
 set -e
 
 OWNER=ninjablocks
-BIN_NAME=sphere-tools
-PROJECT_NAME=sphere-tools
+BIN_NAME=sphere-utils
+PROJECT_NAME=sphere-utils
 
 
 # Get the parent directory of where this script is.
@@ -34,4 +34,4 @@ cd .gopath/src/github.com/${OWNER}/${PROJECT_NAME}
 go get -d -v ./...
 
 # build each of the tools and put them in the bin folder for packaging.
-go build -ldflags "-X main.GitCommit ${GIT_COMMIT}${GIT_DIRTY}" -o ./bin/sphere-go-serial -x github.com/ninjasphere/go-ninja/tools/sphere-serial
+go build -ldflags "-X main.GitCommit ${GIT_COMMIT}${GIT_DIRTY}" -o ./bin/sphere-go-serial -x github.com/ninjablocks/sphere-utils/tools/sphere-serial
