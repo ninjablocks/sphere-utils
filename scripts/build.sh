@@ -34,4 +34,4 @@ cd .gopath/src/github.com/${OWNER}/${PROJECT_NAME}
 go get -d -v ./...
 
 # build each of the tools and put them in the bin folder for packaging.
-go build -ldflags "-X main.GitCommit ${GIT_COMMIT}${GIT_DIRTY}" -o ./bin/sphere-serial -x github.com/ninjasphere/go-ninja/tools/sphere-serial
+go build -ldflags "-X main.GitCommit ${GIT_COMMIT}${GIT_DIRTY}" -o ./bin/sphere-go-serial -x github.com/ninjasphere/go-ninja/tools/sphere-serial
