@@ -1,6 +1,8 @@
-
 all:
 	scripts/build.sh
+
+install:
+	cd tools/sphere-go-serial && go install
 
 clean:
 	rm -f bin/* || true
