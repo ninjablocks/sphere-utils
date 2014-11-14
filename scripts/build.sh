@@ -35,3 +35,4 @@ go get -d -v ./...
 
 # build each of the tools and put them in the bin folder for packaging.
 go build -ldflags "-X main.GitCommit ${GIT_COMMIT}${GIT_DIRTY}" -o ./bin/sphere-go-serial -x github.com/ninjablocks/sphere-utils/tools/sphere-go-serial
+go build -ldflags "-X main.GitCommit ${GIT_COMMIT}${GIT_DIRTY}" -o ./bin/sphere-go-config -x github.com/ninjablocks/sphere-utils/tools/sphere-go-config
