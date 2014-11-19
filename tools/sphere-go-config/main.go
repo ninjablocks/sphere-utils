@@ -9,11 +9,12 @@ import (
 )
 
 var flatten = flag.Bool("flatten", false, "Flatten the config tree")
+var flat = flag.Bool("flat", false, "Flatten the config tree. Alt")
 
 func main() {
 	flag.Parse()
 
-	out, _ := json.Marshal(config.GetAll(*flatten))
+	out, _ := json.Marshal(config.GetAll(*flatten || *flat))
 
 	fmt.Println(string(out))
 }
