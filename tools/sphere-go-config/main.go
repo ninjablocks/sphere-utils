@@ -2,19 +2,27 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
-
 	"github.com/ninjasphere/go-ninja/config"
+	"os"
 )
 
-var flatten = flag.Bool("flatten", false, "Flatten the config tree")
-var flat = flag.Bool("flat", false, "Flatten the config tree. Alt")
-
 func main() {
-	flag.Parse()
+	flatten := false
 
-	out, _ := json.Marshal(config.GetAll(*flatten || *flat))
+	for _, a := range os.Args[1:] {
+		if a == "--flatten" || a == "--flat" {
+			flatten = true
+		}
+	}
 
-	fmt.Println(string(out))
+	theMap := config.GetAll(flatten)
+	if flatten {
+		for k, v := range theMap {
+			fmt.Printf("%s=%v\n", k, v)
+		}
+	} else {
+		out, _ := json.Marshal(theMap)
+		fmt.Println(string(out))
+	}
 }
