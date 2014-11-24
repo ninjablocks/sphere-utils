@@ -22,7 +22,7 @@ func main() {
 			fmt.Printf("%s=%v\n", k, v)
 		}
 	} else {
-		out, _ := json.Marshal(theMap)
+		out, _ := json.MarshalIndent(theMap, "", "  ")
 		fmt.Println(string(out))
 	}
 }
