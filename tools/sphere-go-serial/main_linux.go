@@ -2,12 +2,13 @@ package main
 
 import (
 	"bytes"
+	"os/exec"
 	"encoding/base32"
 	"encoding/hex"
+	"errors"
 	"io/ioutil"
 	"os"
 	"strings"
-	"errors"
 )
 
 func main() {
@@ -21,7 +22,10 @@ func main() {
 	if err != nil {
 		serial, err = extractSerialFromBeagleEEPROM()
 		if err != nil {
-			panic(err)
+			serial, err = extractFromMacAddress()
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 
@@ -51,6 +55,7 @@ func extractSerialFromCmdline(cmdline []byte) (string, error) {
 
 const i2cDeviceCreate = "/sys/bus/i2c/devices/i2c-0/new_device"
 const i2CEEPROMDeviceNode = "/sys/bus/i2c/devices/0-0050/eeprom"
+
 func extractSerialFromBeagleEEPROM() (string, error) {
 	if _, err := os.Stat(i2cDeviceCreate); os.IsNotExist(err) {
 		return "", errors.New("I2C not available, likely not running on a BeagleBone")
@@ -81,4 +86,14 @@ func extractSerialFromBeagleEEPROM() (string, error) {
 	file.Close()
 
 	return strings.TrimRight(string(bytes), "\xff\x00"), nil
+}
+
+func extractFromMacAddress() (string, error) {
+	cmd := exec.Command("/bin/sh", "-c", "ifconfig | sed -n 's/\\([^ ]*\\).*HWaddr /\\1 /p' | egrep '^(wlan|eth)' | cut -f2 -d' ' | tail -1 | openssl md5 | cut -f2 -d' ' | base64 | cut -c1-12 | tr '[a-z]' 'A-Z'")
+	bytes, err := cmd.Output()
+	if err != nil {
+	   return "", err
+	} else {
+	   return "MAC" + string(bytes[0:len(bytes)-1]),nil
+	}
 }
