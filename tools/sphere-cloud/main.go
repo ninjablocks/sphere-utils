@@ -15,7 +15,7 @@ const (
 
 func main() {
 	args := os.Args
-	if len(args) < 1 {
+	if len(args) < 2 {
 		fmt.Fprintf(os.Stderr, USAGE)
 		os.Exit(1)
 	}
@@ -52,7 +52,7 @@ func main() {
 			os.Exit(1)
 		}
 	default:
-		fmt.Fprintf(os.Stderr, "unrecognized argument: %s", args[0])
+		fmt.Fprintf(os.Stderr, "unrecognized argument: %s\n", args[0])
 		fmt.Fprintf(os.Stderr, USAGE)
 		os.Exit(1)
 	}
