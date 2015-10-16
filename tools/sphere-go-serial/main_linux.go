@@ -2,20 +2,32 @@ package main
 
 import (
 	"bytes"
-	"os/exec"
 	"encoding/base32"
 	"encoding/hex"
 	"errors"
+	"flag"
+	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"strings"
 )
 
 func main() {
 
-	input, err := ioutil.ReadFile("/proc/cmdline")
-	if err != nil {
-		panic(err)
+	hwSerial := flag.String("hwserial", "", "The hardware serial")
+	flag.Parse()
+
+	var err error
+	input := []byte{}
+
+	if hwSerial != nil && *hwSerial != "" {
+		input = []byte(fmt.Sprintf("hwserial=%s ", *hwSerial))
+	} else {
+		input, err = ioutil.ReadFile("/proc/cmdline")
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	serial, err := extractSerialFromCmdline(input)
@@ -92,8 +104,8 @@ func extractFromMacAddress() (string, error) {
 	cmd := exec.Command("/bin/sh", "-c", "ifconfig | sed -n 's/\\([^ ]*\\).*HWaddr /\\1 /p' | egrep '^(wlan|eth)' | cut -f2 -d' ' | tail -1 | openssl md5 | cut -f2 -d' ' | base64 | cut -c1-12 | tr '[a-z]' 'A-Z'")
 	bytes, err := cmd.Output()
 	if err != nil {
-	   return "", err
+		return "", err
 	} else {
-	   return "MAC" + string(bytes[0:len(bytes)-1]),nil
+		return "MAC" + string(bytes[0:len(bytes)-1]), nil
 	}
 }
