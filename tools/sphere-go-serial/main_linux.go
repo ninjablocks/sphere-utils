@@ -15,8 +15,10 @@ import (
 
 func main() {
 
-	hwSerial := flag.String("hwserial", "", "The hardware serial")
-	flag.Parse()
+	flagset := flag.NewFlagSet("cmdline", flag.ContinueOnError)
+	flagset.SetOutput(ioutil.Discard)
+	hwSerial := flagset.String("hwserial", "", "The hardware serial")
+	flagset.Parse(os.Args[1:])
 
 	var err error
 	input := []byte{}
