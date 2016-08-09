@@ -33,6 +33,11 @@ fi
 cd .gopath/src/github.com/${OWNER}/${PROJECT_NAME}
 go get -d -v ./...
 
+# deal with juju/loggo change
+GOOS= GOARCH= go get github.com/tools/godep
+export PATH=$GOPATH/bin:$PATH
+godep restore
+
 # build each of the tools and put them in the bin folder for packaging.
 go build -ldflags "-X main.GitCommit ${GIT_COMMIT}${GIT_DIRTY}" -o ./bin/sphere-go-serial -x github.com/ninjablocks/sphere-utils/tools/sphere-go-serial
 go build -ldflags "-X main.GitCommit ${GIT_COMMIT}${GIT_DIRTY}" -o ./bin/sphere-go-config -x github.com/ninjablocks/sphere-utils/tools/sphere-go-config
