@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 	"syscall"
 )
@@ -115,15 +116,15 @@ func extractFromMacAddress() (string, error) {
 	// get the current state
 	euid := os.Geteuid()
 	uid := os.Getuid()
-	egid := os.Getguid()
+	egid := os.Getegid()
 	gid := os.Getgid()
 
 	// make the state safe
 	if euid != uid {
-		syscall.SetUid(uid)
+		syscall.Setuid(uid)
 	}
 	if egid != gid {
-		syscall.SetGid(gid)
+		syscall.Setgid(gid)
 	}
 
 	// do the potentially unsafe stuff now...
