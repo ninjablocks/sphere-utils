@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"syscall"
 )
 
 func main() {
@@ -71,6 +72,9 @@ const i2cDeviceCreate = "/sys/bus/i2c/devices/i2c-0/new_device"
 const i2CEEPROMDeviceNode = "/sys/bus/i2c/devices/0-0050/eeprom"
 
 func extractSerialFromBeagleEEPROM() (string, error) {
+
+	// this code needs to run setuid(root) to provide access to the necessary namespace
+
 	if _, err := os.Stat(i2cDeviceCreate); os.IsNotExist(err) {
 		return "", errors.New("I2C not available, likely not running on a BeagleBone")
 	}
@@ -103,6 +107,26 @@ func extractSerialFromBeagleEEPROM() (string, error) {
 }
 
 func extractFromMacAddress() (string, error) {
+
+	// lock the goroutine to a known Linux thread
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
+	// get the current state
+	euid := os.Geteuid()
+	uid := os.Getuid()
+	egid := os.Getguid()
+	gid := os.Getgid()
+
+	// make the state safe
+	if euid != uid {
+		syscall.SetUid(uid)
+	}
+	if egid != gid {
+		syscall.SetGid(gid)
+	}
+
+	// do the potentially unsafe stuff now...
 	cmd := exec.Command("/bin/sh", "-c", "ifconfig | sed -n 's/\\([^ ]*\\).*HWaddr /\\1 /p' | egrep '^(wlan|eth)' | cut -f2 -d' ' | tail -1 | openssl md5 | cut -f2 -d' ' | base64 | cut -c1-12 | tr '[a-z]' 'A-Z'")
 	bytes, err := cmd.Output()
 	if err != nil {

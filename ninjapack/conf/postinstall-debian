@@ -1,0 +1,2 @@
+# required for accessing beaglebone eeprom. see source for protections.
+chmod u+s /opt/ninjablocks/bin/sphere-go-serial 
