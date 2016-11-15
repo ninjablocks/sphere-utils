@@ -128,7 +128,7 @@ func extractFromMacAddress() (string, error) {
 	}
 
 	// do the potentially unsafe stuff now...
-	cmd := exec.Command("/bin/sh", "-c", "PATH=/sbin:/bin:/usr/bin ifconfig | sed -n 's/\\([^ ]*\\).*HWaddr /\\1 /p' | egrep '^(wlan|eth)' | cut -f2 -d' ' | tail -1 | openssl md5 | cut -f2 -d' ' | base64 | cut -c1-12 | tr '[a-z]' 'A-Z'")
+	cmd := exec.Command("/bin/sh", "-c", "export PATH=/sbin:/bin:/usr/bin; ifconfig | sed -n 's/\\([^ ]*\\).*HWaddr /\\1 /p' | egrep '^(wlan|eth)' | cut -f2 -d' ' | tail -1 | openssl md5 | cut -f2 -d' ' | base64 | cut -c1-12 | tr '[a-z]' 'A-Z'")
 	bytes, err := cmd.Output()
 	if err != nil {
 		return "", err
